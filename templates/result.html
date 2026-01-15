@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<h1>Today's Optimized Study Plan</h1>
+
+{% if missed %}
+<p style="color:#f87171;">⚠️ You missed yesterday. Schedule adapted.</p>
+{% endif %}
+
+<p><strong>🔥 Current Streak:</strong> {{ streak }} days</p>
+
+<h3>Focus Areas</h3>
+<ul>
+{% for subject, time in weak_subjects %}
+<li>{{ subject }} — {{ "%.2f"|format(time) }} hrs studied</li>
+{% endfor %}
+</ul>
+
+<p><strong>Productivity:</strong> {{ efficiency }}%</p>
+
+<p style="margin:12px 0;">{{ feedback }}</p>
+
+<h1>Today's Study Plan</h1>
+<p>🔥 Current Streak: {{ streak }} days</p>
+
+<form action="/complete" method="POST">
+
+{% for block in schedule %}
+<div class="block">
+    <b>{{ block.task }}</b><br>
+    {{ block.start }} — {{ block.end }} ({{ block.duration }} hrs)
+    <br>
+    <input type="checkbox" name="completed" value="{{ block.task }}"> Completed
+</div>
+{% endfor %}
+
+<button type="submit">Save Progress</button>
+</form>
+
+<a href="/">Create Another Plan</a>
+</body>
+</html>
