@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smart Study Planner</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+    padding:40px;
+}
+
+.container {
+    max-width:900px;
+    margin:auto;
+}
+
+.card {
+    background:#020617;
+    padding:25px;
+    border-radius:16px;
+    margin-bottom:25px;
+}
+
+h1, h2, h3 {
+    margin-top:0;
+}
+
+input, button {
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    margin:6px 0;
+}
+
+input {
+    width:150px;
+}
+
+button {
+    background:#38bdf8;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.task-block {
+    background:#1e293b;
+    padding:14px;
+    border-radius:10px;
+    margin-top:12px;
+}
+
+.flex {
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.status-box {
+    background:#020617;
+    padding:18px;
+    border-radius:12px;
+    margin-bottom:20px;
+}
+
+.small {
+    color:#94a3b8;
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🎓 Smart Study Planner</h1>
+
+<div class="status-box">
+<p><strong>🔥 Current Streak:</strong> {{ streak }} days</p>
+<p><strong>Productivity:</strong> {{ efficiency }}%</p>
+<p class="small">{{ feedback }}</p>
+
+<h3>Focus Areas</h3>
+<ul>
+{% for subject, time in weak_subjects %}
+<li>{{ subject }} — {{ "%.2f"|format(time) }} hrs studied</li>
+{% endfor %}
+</ul>
+</div>
+
+<div class="card">
+<h2>Create Today's Plan</h2>
+
+<form method="POST">
+<div id="tasks">
+<div class="flex">
+<input name="task[]" placeholder="Task">
+<input name="difficulty[]" placeholder="Difficulty (1–5)" size="18">
+<input name="hours[]" placeholder="Hours Needed" size="14">
+<input type="date" name="deadline[]">
+</div>
+</div>
+
+<br>
+<button type="button" onclick="addTask()">+ Add Task</button>
+
+<br><br>
+<label>Daily Study Hours:</label><br>
+<input name="daily_hours" placeholder="Eg: 8">
+
+<br><br>
+<button type="submit">Generate Plan</button>
+</form>
+</div>
+
+{% if schedule %}
+<div class="card">
+<h2>📅 Today's Study Plan</h2>
+
+<form action="/complete" method="POST">
+
+{% for s in schedule %}
+<div class="task-block">
+<b>{{ s.task }}</b><br>
+{{ s.start }} — {{ s.end }} ({{ s.hours }} hrs)
+
+<br>
+<label>
+<input type="checkbox" name="completed_tasks" value="{{ s.task }}">
+ Mark as completed
+</label>
+</div>
+{% endfor %}
+
+<br>
+<button type="submit">Save Today's Progress</button>
+</form>
+</div>
+{% endif %}
+
+</div>
+
+<script>
+function addTask(){
+    let div = document.createElement("div");
+    div.className = "flex";
+    div.innerHTML = `
+        <input name="task[]" placeholder="Task">
+        <input name="difficulty[]" placeholder="Difficulty (1–5)" size="18">
+        <input name="hours[]" placeholder="Hours Needed" size="14">
+        <input type="date" name="deadline[]">
+    `;
+    document.getElementById("tasks").appendChild(div);
+}
+</script>
+
+</body>
+</html>
